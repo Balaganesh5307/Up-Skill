@@ -8,7 +8,6 @@ def convert_currrency(amount, from_curr, to_curr):
         'JPY': 150
     }
     
-    # Normalize inputs to uppercase
     from_curr = from_curr.upper()
     to_curr = to_curr.upper()
     
