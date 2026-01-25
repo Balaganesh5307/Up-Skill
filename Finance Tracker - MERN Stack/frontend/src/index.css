@@ -720,45 +720,87 @@ body {
     padding: 0.75rem;
   }
 
-  /* Navbar Mobile */
+  /* Navbar Mobile - Fixed Alignment */
   .navbar {
     padding: 0.75rem 1rem;
   }
 
   .navbar-container {
-    flex-wrap: wrap;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
     gap: 0.5rem;
   }
 
   .navbar-brand {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .navbar-brand span {
+    display: none;
+    /* Hide brand text on very small screens */
+  }
+
+  .navbar-brand svg {
+    width: 24px;
+    height: 24px;
   }
 
   .navbar-links {
-    gap: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
   }
 
   .navbar-link {
     padding: 0.5rem;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .navbar-link:hover,
+  .navbar-link.active {
+    background: var(--bg-card-hover);
   }
 
   .navbar-link span {
     display: none;
+    /* Hide link text */
   }
 
   .navbar-user {
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
+    flex-shrink: 0;
   }
 
   .user-name {
     display: none;
+    /* Hide user name on mobile */
   }
 
   .btn-logout {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.8rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 36px;
+    border-radius: var(--radius-sm);
   }
+
+  .btn-logout:hover {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+    color: white;
+  }
+
 
   /* Summary Cards Mobile */
   .summary-cards {
@@ -882,7 +924,8 @@ body {
 
   .form-input {
     padding: 0.75rem;
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 16px;
+    /* Prevents zoom on iOS */
   }
 
   .form-group {
@@ -1110,6 +1153,7 @@ body {
 
 /* Print Styles */
 @media print {
+
   .navbar,
   .btn,
   .transaction-actions,
@@ -1131,6 +1175,7 @@ body {
 
 /* Reduce Motion for Accessibility */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
