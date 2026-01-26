@@ -10,12 +10,15 @@ const Navbar = () => {
 
     const isAdmin = user?.role === 'admin';
 
+    // DEBUG: Log to verify deployment and role
+    console.log('[NAVBAR v2] User:', user, 'isAdmin:', isAdmin, 'role:', user?.role);
+
     return (
         <nav className="navbar">
             <div className="navbar-container">
                 <Link to="/" className="navbar-brand">
                     <FiDollarSign size={24} />
-                    <span>FinanceTracker</span>
+                    <span>FinanceTracker Pro</span>
                 </Link>
 
                 {isAuthenticated && (
@@ -27,7 +30,7 @@ const Navbar = () => {
                                     className={`navbar-link ${location.pathname === '/admin' ? 'active' : ''}`}
                                 >
                                     <FiShield />
-                                    <span>Admin</span>
+                                    <span>Admin Panel</span>
                                 </Link>
                             ) : (
                                 <>
@@ -55,7 +58,7 @@ const Navbar = () => {
                             </button>
                             <span className="user-name">
                                 Hello, {user?.name}
-                                {isAdmin && <span className="admin-badge">Admin</span>}
+                                {isAdmin && <span className="admin-badge">ADMIN</span>}
                             </span>
                             <button onClick={logout} className="btn-logout">
                                 <FiLogOut />
