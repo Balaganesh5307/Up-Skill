@@ -1,0 +1,17 @@
+# Auto-generated files
+node_modules/
+
+# Environment files
+.env
+
+# Upload directory (keep directory, ignore files)
+uploads/*
+!uploads/.gitkeep
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db

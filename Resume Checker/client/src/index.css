@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  /* Matches navbar height (h-20) */
+}
+
+:root {
+  --primary: #0ea5e9;
+  --primary-dark: #0284c7;
+  --secondary: #6366f1;
+  --accent: #f43f5e;
+  --neutral-950: #0a0a0a;
+  --neutral-900: #171717;
+  --neutral-800: #262626;
+  --neutral-100: #f5f5f5;
+  --surface: #ffffff;
+
+  --ease-premium: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: all 0.3s var(--ease-premium);
+}
+
+@layer base {
+  body {
+    @apply antialiased text-neutral-900 bg-neutral-50;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: 'Outfit', sans-serif;
+    @apply tracking-tight font-semibold;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20;
+  }
+
+  .premium-shadow {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05), 0 20px 25px -5px rgb(0 0 0 / 0.03);
+  }
+
+  .premium-shadow-hover {
+    @apply transition-shadow duration-300;
+  }
+
+  .premium-shadow-hover:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08), 0 25px 50px -12px rgb(0 0 0 / 0.05);
+  }
+
+  .animate-premium-fade-in {
+    animation: premium-fade-in 0.6s var(--ease-premium) forwards;
+  }
+
+  .animate-premium-slide-up {
+    animation: premium-slide-up 0.8s var(--ease-premium) forwards;
+  }
+}
+
+@keyframes premium-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes premium-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-neutral-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-300 rounded-full border-2 border-neutral-100;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-neutral-400;
+}
+
+/* Selection */
+::selection {
+  @apply bg-sky-200 text-sky-900;
+}
