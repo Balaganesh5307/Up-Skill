@@ -15,6 +15,8 @@ const Results = () => {
     const [roles, setRoles] = useState([]);
     const [rolesLoading, setRolesLoading] = useState(false);
     const [rolesError, setRolesError] = useState('');
+    const [shareLoading, setShareLoading] = useState(false);
+    const [shareSuccess, setShareSuccess] = useState(false);
 
     useEffect(() => {
         const fetchResults = async () => {
@@ -84,6 +86,23 @@ const Results = () => {
         }
     };
 
+    const handleShare = async () => {
+        setShareLoading(true);
+        setShareSuccess(false);
+        try {
+            const response = await api.post(`/reports/generate/${id}`);
+            const shareId = response.data.data.shareId;
+            const shareUrl = `${window.location.origin}/report/${shareId}`;
+            await navigator.clipboard.writeText(shareUrl);
+            setShareSuccess(true);
+            setTimeout(() => setShareSuccess(false), 3000);
+        } catch (err) {
+            console.error('Error generating share link:', err);
+        } finally {
+            setShareLoading(false);
+        }
+    };
+
     if (loading) return <div className="min-h-[80vh] flex items-center justify-center"><Spinner size="lg" /></div>;
     if (error) return (
         <div className="container mx-auto px-6 py-20 text-center animate-premium-fade-in">
@@ -111,6 +130,22 @@ const Results = () => {
                     <p className="text-neutral-500 font-medium text-lg max-w-xl leading-relaxed">
                         We've identified how your skills map to this role. Use the roadmap below to close any identified gaps.
                     </p>
+                    <button
+                        onClick={handleShare}
+                        disabled={shareLoading}
+                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${shareSuccess
+                            ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                            : 'bg-violet-100 text-violet-700 border border-violet-200 hover:bg-violet-200'
+                            }`}
+                    >
+                        {shareLoading ? (
+                            <><Spinner size="sm" /> Generating...</>
+                        ) : shareSuccess ? (
+                            <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> Link Copied!</>
+                        ) : (
+                            <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg> Share Report</>
+                        )}
+                    </button>
                 </div>
 
                 <Card className="flex flex-col items-center justify-center p-6 sm:p-10 w-full sm:min-w-[280px] border-none bg-neutral-900 text-white relative overflow-hidden shadow-2xl">

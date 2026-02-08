@@ -11,7 +11,8 @@ import {
     Results,
     History,
     RewriteResume,
-    GitHubAnalyzer
+    GitHubAnalyzer,
+    SharedReport
 } from './pages';
 
 const ProtectedRoute = ({ children }) => {
@@ -66,6 +67,7 @@ function App() {
                         <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
                         <Route path="/rewrite" element={<ProtectedRoute><RewriteResume /></ProtectedRoute>} />
                         <Route path="/github" element={<ProtectedRoute><GitHubAnalyzer /></ProtectedRoute>} />
+                        <Route path="/report/:shareId" element={<SharedReport />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </AppLayout>

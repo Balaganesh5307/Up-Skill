@@ -76,6 +76,14 @@ const analysisSchema = new mongoose.Schema({
         }
     }],
 
+    // Unique share ID for public access (generated on demand)
+    shareId: {
+        type: String,
+        unique: true,
+        sparse: true,
+        index: true
+    },
+
     // Analysis creation timestamp
     createdAt: {
         type: Date,

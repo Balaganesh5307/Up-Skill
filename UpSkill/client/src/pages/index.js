@@ -7,3 +7,4 @@ export { default as Results } from './Results';
 export { default as History } from './History';
 export { default as RewriteResume } from './RewriteResume';
 export { default as GitHubAnalyzer } from './GitHubAnalyzer';
+export { default as SharedReport } from './SharedReport';

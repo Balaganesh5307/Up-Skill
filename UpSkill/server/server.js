@@ -21,6 +21,7 @@ const authRoutes = require('./routes/auth');
 const analysisRoutes = require('./routes/analysis');
 const historyRoutes = require('./routes/history');
 const aiRoutes = require('./routes/ai');
+const reportRoutes = require('./routes/reports');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -44,6 +45,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/analysis', analysisRoutes);
 app.use('/api/history', historyRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/reports', reportRoutes);
 
 app.get('/api/health', (req, res) => {
     res.json({
