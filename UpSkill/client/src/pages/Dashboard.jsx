@@ -42,20 +42,20 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="container mx-auto px-6 py-12 max-w-7xl animate-premium-fade-in">
+        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-7xl animate-premium-fade-in">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
                 <div className="space-y-2">
                     <div className="inline-flex items-center px-3 py-1 rounded-lg bg-sky-50 text-sky-700 text-[10px] font-black uppercase tracking-widest border border-sky-100">
                         Analytics Overview
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-neutral-900 leading-tight">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-neutral-900 leading-tight">
                         Welcome, <span className="text-[#0ea5e9]">{user?.name?.split(' ')[0]}</span>.
                     </h1>
                     <p className="text-neutral-500 font-medium">Here's what's happening with your job applications.</p>
                 </div>
-                <Link to="/analyze">
-                    <Button size="lg" className="h-16 px-10 shadow-xl shadow-sky-100/50">
+                <Link to="/analyze" className="w-full sm:w-auto">
+                    <Button size="lg" className="w-full sm:w-auto h-14 sm:h-16 px-8 sm:px-10 shadow-xl shadow-sky-100/50">
                         Start New Analysis
                     </Button>
                 </Link>

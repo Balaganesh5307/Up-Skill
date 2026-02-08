@@ -96,13 +96,13 @@ const Results = () => {
     );
 
     return (
-        <div className="container mx-auto px-6 py-12 max-w-7xl animate-premium-fade-in">
+        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-7xl animate-premium-fade-in">
             <div className="flex flex-col md:flex-row items-start justify-between mb-16 gap-8">
                 <div className="space-y-4">
                     <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest border border-emerald-100">
                         Analysis Complete
                     </div>
-                    <h1 className="text-5xl md:text-6xl font-black text-neutral-900 leading-tight tracking-tight">
+                    <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-neutral-900 leading-tight tracking-tight">
                         Analysis for <br />
                         <span className="text-[#0ea5e9] underline decoration-[#0ea5e9]/20 underline-offset-8">
                             {analysis.jobTitle}
@@ -113,11 +113,11 @@ const Results = () => {
                     </p>
                 </div>
 
-                <Card className="flex flex-col items-center justify-center p-10 min-w-[280px] border-none bg-neutral-900 text-white relative overflow-hidden shadow-2xl">
+                <Card className="flex flex-col items-center justify-center p-6 sm:p-10 w-full sm:min-w-[280px] border-none bg-neutral-900 text-white relative overflow-hidden shadow-2xl">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#0ea5e9] blur-[80px] opacity-30 rounded-full" />
                     <span className="text-xs font-black uppercase tracking-[0.2em] text-neutral-400 mb-4 relative z-10">Overall Match</span>
                     <div className="relative z-10">
-                        <span className="text-7xl font-black text-white">{analysis.matchScore}</span>
+                        <span className="text-5xl sm:text-7xl font-black text-white">{analysis.matchScore}</span>
                         <span className="text-2xl font-black text-[#0ea5e9] ml-1">%</span>
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-[#0ea5e9] mt-4 relative z-10">Gemini AI Score</p>

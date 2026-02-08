@@ -61,12 +61,12 @@ const NewAnalysis = () => {
     };
 
     return (
-        <div className="container mx-auto px-6 py-12 max-w-4xl animate-premium-slide-up">
+        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl animate-premium-slide-up">
             <div className="text-center mb-16 space-y-4">
                 <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-[#0ea5e9]/10 text-[#0ea5e9] border border-[#0ea5e9]/20 font-black text-[10px] uppercase tracking-[0.2em] shadow-sm">
                     AI Analysis Engine
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black text-neutral-900 leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-neutral-900 leading-tight">
                     Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-indigo-600">Perfect Match</span>
                 </h1>
                 <p className="text-neutral-500 font-medium text-lg max-w-2xl mx-auto">

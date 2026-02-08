@@ -49,30 +49,30 @@ const History = () => {
     if (loading) return <div className="min-h-[80vh] flex items-center justify-center"><Spinner size="lg" /></div>;
 
     return (
-        <div className="container mx-auto px-6 py-12 max-w-6xl animate-premium-fade-in">
+        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-6xl animate-premium-fade-in">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
                 <div className="space-y-4">
                     <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 font-black text-[10px] uppercase tracking-[0.2em] shadow-sm">
                         Archive & Records
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-neutral-900 tracking-tight">Analysis History</h1>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-neutral-900 tracking-tight">Analysis History</h1>
                     <p className="text-neutral-500 font-medium text-lg max-w-lg">
                         A complete record of all your resume optimizations and match scores.
                     </p>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
                     {history.length > 0 && (
                         <Button
                             variant="outline"
                             size="md"
                             onClick={handleDeleteAll}
-                            className="px-6 h-14 border-rose-100 text-rose-500 hover:bg-rose-50 hover:border-rose-200"
+                            className="w-full sm:w-auto px-6 h-12 sm:h-14 border-rose-100 text-rose-500 hover:bg-rose-50 hover:border-rose-200"
                         >
                             Clear All
                         </Button>
                     )}
-                    <Link to="/analyze">
-                        <Button size="md" className="px-8 h-14 shadow-lg shadow-sky-100">
+                    <Link to="/analyze" className="w-full sm:w-auto">
+                        <Button size="md" className="w-full sm:w-auto px-8 h-12 sm:h-14 shadow-lg shadow-sky-100">
                             New Analysis
                         </Button>
                     </Link>
