@@ -106,22 +106,28 @@ const Results = () => {
             setTimeout(() => setShareSuccess(false), 3000);
         } catch (err) {
             console.error('Error generating share link:', err);
+            alert('Failed to generate share link. Please try again.');
         } finally {
             setShareLoading(false);
         }
     };
 
     const handleStatusChange = async (analysisId, itemIndex, newStatus) => {
-        const response = await api.patch(`/history/${analysisId}/roadmap/${itemIndex}`, { status: newStatus });
-        if (response.data.success) {
-            setRoadmapProgress(response.data.data.progress);
-            // Update local analysis state
-            setAnalysis(prev => ({
-                ...prev,
-                learningRoadmap: prev.learningRoadmap.map((item, i) =>
-                    i === itemIndex ? { ...item, status: newStatus } : item
-                )
-            }));
+        try {
+            const response = await api.patch(`/history/${analysisId}/roadmap/${itemIndex}`, { status: newStatus });
+            if (response.data.success) {
+                setRoadmapProgress(response.data.data.progress);
+                // Update local analysis state
+                setAnalysis(prev => ({
+                    ...prev,
+                    learningRoadmap: prev.learningRoadmap.map((item, i) =>
+                        i === itemIndex ? { ...item, status: newStatus } : item
+                    )
+                }));
+            }
+        } catch (err) {
+            console.error('Error updating status:', err);
+            throw err; // Re-throw so RoadmapCard can handle it
         }
     };
 
