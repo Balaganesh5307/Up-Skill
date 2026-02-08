@@ -1,7 +1,0 @@
-export { default as Landing } from './Landing';
-export { default as Login } from './Login';
-export { default as Register } from './Register';
-export { default as Dashboard } from './Dashboard';
-export { default as NewAnalysis } from './NewAnalysis';
-export { default as Results } from './Results';
-export { default as History } from './History';
