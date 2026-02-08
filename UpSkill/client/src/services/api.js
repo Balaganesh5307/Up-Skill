@@ -5,9 +5,23 @@ import axios from 'axios';
  * Axios instance configured for backend communication
  */
 
+// Environment-based API URL configuration
+const API_URL = import.meta.env.VITE_API_URL;
+
+// Validate API URL - warn in development, error in production
+if (!API_URL) {
+    const message = 'VITE_API_URL is not defined. Please set it in your .env file.';
+    if (import.meta.env.PROD) {
+        console.error(`❌ ${message}`);
+        throw new Error(message);
+    } else {
+        console.warn(`⚠️ ${message} Using fallback: http://localhost:5000/api`);
+    }
+}
+
 // Create axios instance with default config
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || '/api',
+    baseURL: API_URL || 'http://localhost:5000/api',
     headers: {
         'Content-Type': 'application/json'
     }
