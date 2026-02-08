@@ -16,12 +16,18 @@ const fetchGitHubProfile = async (username) => {
     try {
         console.log(`🔍 Fetching GitHub profile for: ${username}`);
 
+        const headers = {
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'UpSkill-App'
+        };
+
+        if (process.env.GITHUB_TOKEN) {
+            headers['Authorization'] = `token ${process.env.GITHUB_TOKEN}`;
+        }
+
         // Fetch user profile
         const profileResponse = await axios.get(`${GITHUB_API_BASE}/users/${username}`, {
-            headers: {
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'UpSkill-App'
-            }
+            headers
         });
 
         const profile = profileResponse.data;
@@ -32,10 +38,7 @@ const fetchGitHubProfile = async (username) => {
                 sort: 'updated',
                 per_page: 30
             },
-            headers: {
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'UpSkill-App'
-            }
+            headers
         });
 
         const repos = reposResponse.data;
