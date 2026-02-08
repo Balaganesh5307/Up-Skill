@@ -17,12 +17,20 @@ const Results = () => {
     const [rolesError, setRolesError] = useState('');
     const [shareLoading, setShareLoading] = useState(false);
     const [shareSuccess, setShareSuccess] = useState(false);
+    const [roadmapProgress, setRoadmapProgress] = useState({ completed: 0, total: 0, percent: 0 });
 
     useEffect(() => {
         const fetchResults = async () => {
             try {
                 const response = await api.get(`/history/${id}`);
-                setAnalysis(response.data.data.analysis);
+                const analysisData = response.data.data.analysis;
+                setAnalysis(analysisData);
+                // Calculate initial progress
+                if (analysisData.learningRoadmap) {
+                    const total = analysisData.learningRoadmap.length;
+                    const done = analysisData.learningRoadmap.filter(item => item.status === 'done').length;
+                    setRoadmapProgress({ completed: done, total, percent: total > 0 ? Math.round((done / total) * 100) : 0 });
+                }
             } catch (err) {
                 console.error('Error fetching results:', err);
                 setError('Failed to load analysis results. It might have been deleted.');
@@ -100,6 +108,20 @@ const Results = () => {
             console.error('Error generating share link:', err);
         } finally {
             setShareLoading(false);
+        }
+    };
+
+    const handleStatusChange = async (analysisId, itemIndex, newStatus) => {
+        const response = await api.patch(`/history/${analysisId}/roadmap/${itemIndex}`, { status: newStatus });
+        if (response.data.success) {
+            setRoadmapProgress(response.data.data.progress);
+            // Update local analysis state
+            setAnalysis(prev => ({
+                ...prev,
+                learningRoadmap: prev.learningRoadmap.map((item, i) =>
+                    i === itemIndex ? { ...item, status: newStatus } : item
+                )
+            }));
         }
     };
 
@@ -189,14 +211,20 @@ const Results = () => {
                         <div className="px-5 py-2.5 bg-sky-50 rounded-2xl border border-sky-100 flex items-center shadow-sm">
                             <span className="w-2 h-2 rounded-full bg-[#0ea5e9] mr-3 animate-pulse" />
                             <span className="text-xs font-black uppercase tracking-widest text-[#0ea5e9]">
-                                {analysis.learningRoadmap.length} Training Modules
+                                {roadmapProgress.completed}/{roadmapProgress.total} Complete ({roadmapProgress.percent}%)
                             </span>
                         </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {analysis.learningRoadmap.map((item, index) => (
-                            <RoadmapCard key={index} item={item} index={index} />
+                            <RoadmapCard
+                                key={index}
+                                item={item}
+                                index={index}
+                                analysisId={id}
+                                onStatusChange={handleStatusChange}
+                            />
                         ))}
                     </div>
                 </section>

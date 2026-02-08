@@ -73,6 +73,11 @@ const analysisSchema = new mongoose.Schema({
         },
         resourceName: {
             type: String
+        },
+        status: {
+            type: String,
+            enum: ['todo', 'in-progress', 'done'],
+            default: 'todo'
         }
     }],
 

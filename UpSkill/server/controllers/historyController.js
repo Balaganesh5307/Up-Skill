@@ -118,9 +118,75 @@ const deleteAllHistory = async (req, res, next) => {
     }
 };
 
+/**
+ * Update roadmap item status
+ * PATCH /api/history/:id/roadmap/:index
+ */
+const updateRoadmapProgress = async (req, res, next) => {
+    try {
+        const { id, index } = req.params;
+        const { status } = req.body;
+
+        // Validate status
+        const validStatuses = ['todo', 'in-progress', 'done'];
+        if (!status || !validStatuses.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+            });
+        }
+
+        // Find analysis
+        const analysis = await Analysis.findOne({
+            _id: id,
+            user: req.userId
+        });
+
+        if (!analysis) {
+            return res.status(404).json({
+                success: false,
+                message: 'Analysis not found'
+            });
+        }
+
+        // Validate index
+        const itemIndex = parseInt(index, 10);
+        if (isNaN(itemIndex) || itemIndex < 0 || itemIndex >= analysis.learningRoadmap.length) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid roadmap item index'
+            });
+        }
+
+        // Update status
+        analysis.learningRoadmap[itemIndex].status = status;
+        await analysis.save();
+
+        // Calculate progress
+        const total = analysis.learningRoadmap.length;
+        const done = analysis.learningRoadmap.filter(item => item.status === 'done').length;
+        const progressPercent = total > 0 ? Math.round((done / total) * 100) : 0;
+
+        res.json({
+            success: true,
+            data: {
+                updatedItem: analysis.learningRoadmap[itemIndex],
+                progress: {
+                    completed: done,
+                    total,
+                    percent: progressPercent
+                }
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getHistory,
     getAnalysis,
     deleteAnalysis,
-    deleteAllHistory
+    deleteAllHistory,
+    updateRoadmapProgress
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getHistory, getAnalysis, deleteAnalysis, deleteAllHistory } = require('../controllers/historyController');
+const { getHistory, getAnalysis, deleteAnalysis, deleteAllHistory, updateRoadmapProgress } = require('../controllers/historyController');
 const auth = require('../middleware/auth');
 
 /**
@@ -20,5 +20,8 @@ router.delete('/', auth, deleteAllHistory);
 
 // DELETE /api/history/:id - Delete analysis by ID
 router.delete('/:id', auth, deleteAnalysis);
+
+// PATCH /api/history/:id/roadmap/:index - Update roadmap item status
+router.patch('/:id/roadmap/:index', auth, updateRoadmapProgress);
 
 module.exports = router;
