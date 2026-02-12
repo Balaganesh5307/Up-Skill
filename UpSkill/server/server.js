@@ -55,6 +55,23 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+app.get('/api/debug/gemini', async (req, res) => {
+    try {
+        const key = process.env.GEMINI_API_KEY;
+        if (!key) {
+            return res.json({ error: 'GEMINI_API_KEY is not set', hasKey: false });
+        }
+        const { GoogleGenerativeAI } = require('@google/generative-ai');
+        const genAI = new GoogleGenerativeAI(key);
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+        const result = await model.generateContent('Say "hello" in one word');
+        const text = (await result.response).text();
+        res.json({ hasKey: true, keyPrefix: key.substring(0, 10) + '...', testResponse: text, working: true });
+    } catch (err) {
+        res.json({ hasKey: true, keyPrefix: process.env.GEMINI_API_KEY?.substring(0, 10) + '...', error: err.message, working: false });
+    }
+});
+
 app.use((req, res, next) => {
     res.status(404).json({
         success: false,
