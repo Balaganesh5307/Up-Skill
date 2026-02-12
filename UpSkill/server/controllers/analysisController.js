@@ -1,12 +1,29 @@
 const Analysis = require('../models/Analysis');
+const User = require('../models/User');
 const AnalysisCache = require('../models/AnalysisCache');
 const { extractText, deleteFile } = require('../services/fileParser');
 const { analyzeSkillGap } = require('../services/geminiService');
+
+const COOLDOWN_SECONDS = 60;
 
 const analyzeResume = async (req, res, next) => {
     let filePath = null;
 
     try {
+        const user = await User.findById(req.userId);
+        if (user?.lastAnalysisAt) {
+            const elapsed = Math.floor((Date.now() - user.lastAnalysisAt.getTime()) / 1000);
+            if (elapsed < COOLDOWN_SECONDS) {
+                const remainingSeconds = COOLDOWN_SECONDS - elapsed;
+                return res.status(429).json({
+                    success: false,
+                    message: `Please wait ${remainingSeconds} seconds before analyzing again.`,
+                    remainingSeconds,
+                    retryAfter: remainingSeconds
+                });
+            }
+        }
+
         if (!req.file) {
             return res.status(400).json({
                 success: false,
@@ -62,6 +79,8 @@ const analyzeResume = async (req, res, next) => {
             learningRoadmap: analysisResult.learningRoadmap
         });
 
+        await User.findByIdAndUpdate(req.userId, { lastAnalysisAt: new Date() });
+
         deleteFile(filePath);
 
         res.status(201).json({
@@ -88,6 +107,29 @@ const analyzeResume = async (req, res, next) => {
     }
 };
 
+const getCooldownStatus = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.userId);
+        if (!user?.lastAnalysisAt) {
+            return res.json({ success: true, data: { onCooldown: false, remainingSeconds: 0 } });
+        }
+
+        const elapsed = Math.floor((Date.now() - user.lastAnalysisAt.getTime()) / 1000);
+        const remaining = Math.max(0, COOLDOWN_SECONDS - elapsed);
+
+        res.json({
+            success: true,
+            data: {
+                onCooldown: remaining > 0,
+                remainingSeconds: remaining
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
-    analyzeResume
+    analyzeResume,
+    getCooldownStatus
 };

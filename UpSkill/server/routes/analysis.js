@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const { analyzeResume } = require('../controllers/analysisController');
+const { analyzeResume, getCooldownStatus } = require('../controllers/analysisController');
 const auth = require('../middleware/auth');
-const { analysisRateLimiter, dailyRateLimiter } = require('../middleware/rateLimiter');
+const { dailyRateLimiter } = require('../middleware/rateLimiter');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -38,6 +38,7 @@ const upload = multer({
     }
 });
 
-router.post('/analyze', auth, dailyRateLimiter, analysisRateLimiter, upload.single('resume'), analyzeResume);
+router.get('/cooldown', auth, getCooldownStatus);
+router.post('/analyze', auth, dailyRateLimiter, upload.single('resume'), analyzeResume);
 
 module.exports = router;
