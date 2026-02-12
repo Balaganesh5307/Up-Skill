@@ -6,7 +6,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
  */
 
 // Use models that are confirmed to be available for this API key
-const GEMINI_MODELS = ['gemini-flash-latest', 'gemini-1.5-flash', 'gemini-2.0-flash'];
+const GEMINI_MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash'];
 
 /**
  * Sleep helper for retry logic
