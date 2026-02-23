@@ -1,10 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
 
-/**
- * Authentication Context
- * Manages user authentication state across the application
- */
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
@@ -12,7 +8,6 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
 
-    // Check if user is authenticated on mount
     useEffect(() => {
         const initAuth = async () => {
             if (token) {
@@ -20,7 +15,6 @@ export const AuthProvider = ({ children }) => {
                     const response = await api.get('/auth/profile');
                     setUser(response.data.data.user);
                 } catch (error) {
-                    // Token invalid, clear it
                     localStorage.removeItem('token');
                     setToken(null);
                     setUser(null);
@@ -32,12 +26,6 @@ export const AuthProvider = ({ children }) => {
         initAuth();
     }, [token]);
 
-    /**
-     * Login user with credentials
-     * @param {string} email 
-     * @param {string} password 
-     * @returns {Promise<Object>} - User data
-     */
     const login = async (email, password) => {
         const response = await api.post('/auth/login', { email, password });
         const { user: userData, token: newToken } = response.data.data;
@@ -49,13 +37,6 @@ export const AuthProvider = ({ children }) => {
         return userData;
     };
 
-    /**
-     * Register new user
-     * @param {string} name 
-     * @param {string} email 
-     * @param {string} password 
-     * @returns {Promise<Object>} - User data
-     */
     const register = async (name, email, password) => {
         const response = await api.post('/auth/register', { name, email, password });
         const { user: userData, token: newToken } = response.data.data;
@@ -67,9 +48,29 @@ export const AuthProvider = ({ children }) => {
         return userData;
     };
 
-    /**
-     * Logout current user
-     */
+    const googleLogin = async (jwtToken) => {
+        try {
+            localStorage.setItem('token', jwtToken);
+            setToken(jwtToken);
+
+            const response = await api.get('/auth/profile', {
+                headers: { Authorization: `Bearer ${jwtToken}` }
+            });
+            const userData = response.data.data.user;
+            setUser(userData);
+
+            return { success: true, user: userData };
+        } catch (error) {
+            localStorage.removeItem('token');
+            setToken(null);
+            setUser(null);
+            return {
+                success: false,
+                error: error.response?.data?.message || 'Google login failed'
+            };
+        }
+    };
+
     const logout = () => {
         localStorage.removeItem('token');
         setToken(null);
@@ -83,6 +84,7 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated: !!user,
         login,
         register,
+        googleLogin,
         logout
     };
 
@@ -93,9 +95,6 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-/**
- * Hook to use auth context
- */
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {

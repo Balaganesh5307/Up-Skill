@@ -12,7 +12,8 @@ import {
     History,
     RewriteResume,
     GitHubAnalyzer,
-    SharedReport
+    SharedReport,
+    GoogleAuthCallback
 } from './pages';
 
 const ProtectedRoute = ({ children }) => {
@@ -68,6 +69,7 @@ function App() {
                         <Route path="/rewrite" element={<ProtectedRoute><RewriteResume /></ProtectedRoute>} />
                         <Route path="/github" element={<ProtectedRoute><GitHubAnalyzer /></ProtectedRoute>} />
                         <Route path="/report/:shareId" element={<SharedReport />} />
+                        <Route path="/auth/google/callback" element={<GoogleAuthCallback />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </AppLayout>
