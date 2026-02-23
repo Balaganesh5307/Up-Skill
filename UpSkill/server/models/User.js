@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-/**
- * User Schema
- * Stores user credentials and profile information
- */
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -23,9 +19,27 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: [true, 'Password is required'],
         minlength: [6, 'Password must be at least 6 characters'],
-        select: false // Don't include password in queries by default
+        select: false
+    },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
+    profileImage: {
+        type: String,
+        default: null
+    },
+    authProvider: {
+        type: String,
+        enum: ['local', 'google'],
+        default: 'local'
+    },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
     },
     createdAt: {
         type: Date,
@@ -37,27 +51,27 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-/**
- * Hash password before saving
- */
 userSchema.pre('save', async function (next) {
-    // Only hash if password is modified
-    if (!this.isModified('password')) {
+    if (this.isNew) {
+        const adminEmail = process.env.ADMIN_EMAIL;
+        if (adminEmail && this.email === adminEmail.toLowerCase()) {
+            this.role = 'admin';
+        }
+    }
+
+    if (!this.isModified('password') || !this.password) {
         return next();
     }
 
-    // Generate salt and hash password
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
 });
 
-/**
- * Compare entered password with hashed password
- * @param {string} enteredPassword - Plain text password to compare
- * @returns {boolean} - True if passwords match
- */
 userSchema.methods.comparePassword = async function (enteredPassword) {
+    if (!this.password) {
+        return false;
+    }
     return await bcrypt.compare(enteredPassword, this.password);
 };
 

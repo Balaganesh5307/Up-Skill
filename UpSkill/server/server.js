@@ -17,6 +17,7 @@ if (missingVars.length > 0) {
 console.log('✅ Environment variables loaded successfully');
 
 const connectDB = require('./config/db');
+const passport = require('./config/passport');
 const authRoutes = require('./routes/auth');
 const analysisRoutes = require('./routes/analysis');
 const historyRoutes = require('./routes/history');
@@ -40,6 +41,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/analysis', analysisRoutes);

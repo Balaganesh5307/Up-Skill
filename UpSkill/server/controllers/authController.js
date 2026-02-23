@@ -1,20 +1,19 @@
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
 const User = require('../models/User');
 
-/**
- * Authentication Controller
- * Handles user registration, login, and profile
- */
+const generateToken = (userId) => {
+    return jwt.sign(
+        { userId },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+    );
+};
 
-/**
- * Register a new user
- * POST /api/auth/register
- */
 const register = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
 
-        // Validate required fields
         if (!name || !email || !password) {
             return res.status(400).json({
                 success: false,
@@ -22,7 +21,6 @@ const register = async (req, res, next) => {
             });
         }
 
-        // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({
@@ -31,19 +29,14 @@ const register = async (req, res, next) => {
             });
         }
 
-        // Create new user
         const user = await User.create({
             name,
             email,
-            password
+            password,
+            authProvider: 'local'
         });
 
-        // Generate JWT token
-        const token = jwt.sign(
-            { userId: user._id },
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' }
-        );
+        const token = generateToken(user._id);
 
         res.status(201).json({
             success: true,
@@ -62,15 +55,10 @@ const register = async (req, res, next) => {
     }
 };
 
-/**
- * Login user
- * POST /api/auth/login
- */
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
-        // Validate required fields
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
@@ -78,7 +66,6 @@ const login = async (req, res, next) => {
             });
         }
 
-        // Find user and include password for comparison
         const user = await User.findOne({ email }).select('+password');
 
         if (!user) {
@@ -88,7 +75,13 @@ const login = async (req, res, next) => {
             });
         }
 
-        // Check password
+        if (user.authProvider === 'google' && !user.password) {
+            return res.status(400).json({
+                success: false,
+                message: 'This account uses Google Sign-In. Please use "Continue with Google" to log in.'
+            });
+        }
+
         const isMatch = await user.comparePassword(password);
 
         if (!isMatch) {
@@ -98,12 +91,7 @@ const login = async (req, res, next) => {
             });
         }
 
-        // Generate JWT token
-        const token = jwt.sign(
-            { userId: user._id },
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' }
-        );
+        const token = generateToken(user._id);
 
         res.json({
             success: true,
@@ -112,7 +100,9 @@ const login = async (req, res, next) => {
                 user: {
                     id: user._id,
                     name: user.name,
-                    email: user.email
+                    email: user.email,
+                    profileImage: user.profileImage,
+                    role: user.role
                 },
                 token
             }
@@ -122,10 +112,6 @@ const login = async (req, res, next) => {
     }
 };
 
-/**
- * Get current user profile
- * GET /api/auth/profile
- */
 const getProfile = async (req, res, next) => {
     try {
         res.json({
@@ -135,6 +121,9 @@ const getProfile = async (req, res, next) => {
                     id: req.user._id,
                     name: req.user.name,
                     email: req.user.email,
+                    profileImage: req.user.profileImage,
+                    authProvider: req.user.authProvider,
+                    role: req.user.role,
                     createdAt: req.user.createdAt
                 }
             }
@@ -144,8 +133,40 @@ const getProfile = async (req, res, next) => {
     }
 };
 
+const googleAuth = (req, res, next) => {
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+        return res.status(503).json({
+            success: false,
+            message: 'Google authentication is not configured on this server.'
+        });
+    }
+    passport.authenticate('google', {
+        scope: ['profile', 'email'],
+        session: false
+    })(req, res, next);
+};
+
+const googleCallback = (req, res, next) => {
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+        const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+        return res.redirect(`${clientUrl}/login?error=google_not_configured`);
+    }
+    passport.authenticate('google', { session: false, failureRedirect: '/login' }, (err, user) => {
+        if (err || !user) {
+            const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+            return res.redirect(`${clientUrl}/login?error=google_auth_failed`);
+        }
+
+        const token = generateToken(user._id);
+        const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+        res.redirect(`${clientUrl}/auth/google/callback?token=${token}`);
+    })(req, res, next);
+};
+
 module.exports = {
     register,
     login,
-    getProfile
+    getProfile,
+    googleAuth,
+    googleCallback
 };
