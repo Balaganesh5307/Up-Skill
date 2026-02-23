@@ -9,3 +9,4 @@ export { default as RewriteResume } from './RewriteResume';
 export { default as GitHubAnalyzer } from './GitHubAnalyzer';
 export { default as SharedReport } from './SharedReport';
 export { default as GoogleAuthCallback } from './GoogleAuthCallback';
+export { default as AdminDashboard } from './AdminDashboard';

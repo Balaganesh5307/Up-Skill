@@ -13,7 +13,8 @@ import {
     RewriteResume,
     GitHubAnalyzer,
     SharedReport,
-    GoogleAuthCallback
+    GoogleAuthCallback,
+    AdminDashboard
 } from './pages';
 
 const ProtectedRoute = ({ children }) => {
@@ -28,6 +29,22 @@ const ProtectedRoute = ({ children }) => {
     }
 
     return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
+
+const AdminRoute = ({ children }) => {
+    const { isAuthenticated, user, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Spinner size="lg" />
+            </div>
+        );
+    }
+
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    if (user?.role !== 'admin') return <Navigate to="/dashboard" replace />;
+    return children;
 };
 
 const PublicRoute = ({ children }) => {
@@ -68,6 +85,7 @@ function App() {
                         <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
                         <Route path="/rewrite" element={<ProtectedRoute><RewriteResume /></ProtectedRoute>} />
                         <Route path="/github" element={<ProtectedRoute><GitHubAnalyzer /></ProtectedRoute>} />
+                        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
                         <Route path="/report/:shareId" element={<SharedReport />} />
                         <Route path="/auth/google/callback" element={<GoogleAuthCallback />} />
                         <Route path="*" element={<Navigate to="/" replace />} />

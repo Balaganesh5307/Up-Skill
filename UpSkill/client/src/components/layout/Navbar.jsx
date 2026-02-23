@@ -50,6 +50,19 @@ const Navbar = () => {
                                 {link.name}
                             </Link>
                         ))}
+                        {isAuthenticated && user?.role === 'admin' && (
+                            <Link
+                                to="/admin"
+                                className={`
+                                    px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300
+                                    ${location.pathname === '/admin'
+                                        ? 'bg-amber-50 text-amber-600'
+                                        : 'text-amber-400 hover:text-amber-600 hover:bg-amber-50'}
+                                `}
+                            >
+                                ⚡ Admin
+                            </Link>
+                        )}
                     </div>
 
                     {/* Auth Actions & Mobile Menu Button */}
@@ -135,6 +148,20 @@ const Navbar = () => {
                                     {link.name}
                                 </Link>
                             ))}
+                            {user?.role === 'admin' && (
+                                <Link
+                                    to="/admin"
+                                    onClick={handleLinkClick}
+                                    className={`
+                                        block px-4 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all duration-200
+                                        ${location.pathname === '/admin'
+                                            ? 'bg-amber-50 text-amber-600'
+                                            : 'text-amber-500 hover:bg-amber-50 hover:text-amber-600'}
+                                    `}
+                                >
+                                    ⚡ Admin
+                                </Link>
+                            )}
                         </div>
                     )}
 
